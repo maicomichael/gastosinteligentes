@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gastos Inteligentes</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f3f3f3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
+    form {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      max-width: 400px;
+      margin-bottom: 20px;
+    }
+
+    label {
+      font-weight: bold;
+      margin-bottom: 5px;
+      display: block;
+    }
+
+    input[type="date"],
+    input[type="number"],
+    input[type="text"],
+    select {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    button {
+      background-color: #4caf50;
+      color: white;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    #annualSummaryArea,
+    #monthlySummaryArea,
+    #transactionsTable {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      max-width: 800px; /* Ajuste da largura para acomodar melhor os botões de lixeira */
+      margin-bottom: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    table th,
+    table td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+      font-size: 14px;
+    }
+
+    table th {
+      background-color: #f2f2f2;
+    }
+
+    .positiveDifference {
+      color: green;
+    }
+
+    .negativeDifference {
+      color: red;
+    }
+
+    #transactionsTable table {
+      margin-bottom: 0;
+    }
+
+    #transactionsTable h2 {
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Gastos Inteligentes</h1>
+
+  <div id="annualSummaryArea">
+    <h2>Resumo Anual</h2>
+    <table id="annualSummaryContent">
+      <thead>
+        <tr>
+          <th>Ano</th>
+          <th>Ganhos</th>
+          <th>Gastos</th>
+          <th>Diferença</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <div id="monthlySummaryArea">
+    <h2>Resumo Mensal</h2>
+    <table id="monthlySummaryContent">
+      <thead>
+        <tr>
+          <th>Mês</th>
+          <th>Ganhos</th>
+          <th>Gastos</th>
+          <th>Diferença</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <form id="transactionForm">
+    <h2>Lançamento</h2>
+    <label for="user">Usuário:</label>
+    <select id="user" name="user">
+      <option value="Casal">Casal</option>
+      <option value="Maico">Maico</option>
+      <option value="Carina">Carina</option>
+    </select>
+
+    <label for="date">Dia:</label>
+    <input type="date" id="date" name="date" />
+
+    <label for="amount">Valor (R$):</label>
+    <input type="number" id="amount" name="amount" step="0.01" />
+
+    <label for="type">Tipo:</label>
+    <select id="type" name="type">
+      <option value="">Todos</option>
+      <option value="Academia">Academia</option>
+      <option value="Farmácia">Farmácia</option>
+      <option value="Médico">Médico</option>
+      <option value="Beauty">Beauty</option>
+      <option value="Cannabis">Cannabis</option>
+      <option value="Comida fora">Comida fora</option>
+      <option value="Contadora">Contadora</option>
+      <option value="Mercado">Mercado</option>
+      <option value="Festa">Festa</option>
+      <option value="Gasolina">Gasolina</option>
+      <option value="Instrumento Musical">Instrumento Musical</option>
+      <option value="Conta de Luz">Conta de Luz</option>
+      <option value="Petshop">Petshop</option>
+      <option value="Taxa Banco">Taxa Banco</option>
+      <option value="Apple">Apple</option>
+      <option value="Conta de Telefone">Conta de Telefone</option>
+      <option value="Conta Internet">Conta Internet</option>
+      <option value="Utensílios Casa">Utensílios Casa</option>
+      <option value="Semi Joias">Semi Joias</option>
+      <option value="Vestuário">Vestuário</option>
+      <option value="Ensino">Ensino</option>
+      <option value="Viagem">Viagem</option>
+      <option value="Salário">Salário</option>
+      <option value="Comissão">Comissão</option>
+      <option value="Outros">Outros</option>
+      <option value="Aluguel">Aluguel</option>
+      <!-- Adicione outras opções de tipo aqui conforme necessário -->
+    </select>
+
+    <label for="details">Detalhes:</label>
+    <input type="text" id="details" name="details" />
+
+    <button type="button" onclick="addTransaction()">
+      Adicionar Transação
+    </button>
+  </form>
+
+  <div id="transactionsTable">
+    <h2>Transações</h2>
+    <label for="filterUser">Filtrar por Usuário:</label>
+    <select id="filterUser" onchange="filterTransactions()">
+      <option value="Casal">Casal</option>
+      <option value="Maico">Maico</option>
+      <option value="Carina">Carina</option>
+    </select>
+
+    <label for="filterMonth">Filtrar por Mês:</label>
+    <select id="filterMonth" onchange="filterTransactions()">
+      <option value="">Todos</option>
+      <option value="01">Janeiro</option>
+      <option value="02">Fevereiro</option>
+      <option value="03">Março</option>
+      <option value="04">Abril</option>
+      <option value="05">Maio</option>
+      <option value="06">Junho</option>
+      <option value="07">Julho</option>
+      <option value="08">Agosto</option>
+      <option value="09">Setembro</option>
+      <option value="10">Outubro</option>
+      <option value="11">Novembro</option>
+      <option value="12">Dezembro</option>
+    </select>
+
+    <label for="filterAmount">Filtrar por Valor:</label>
+    <select id="filterAmount" onchange="filterTransactions()">
+      <option value="">Todos</option>
+      <option value="asc">Menor para Maior</option>
+      <option value="desc">Maior para Menor</option>
+    </select>
+
+    <label for="filterType">Filtrar por Tipo:</label>
+    <select id="filterType" onchange="filterTransactions()">
+      <option value="">Todos</option>
+      <option value="Academia">Academia</option>
+      <option value="Farmácia">Farmácia</option>
+      <option value="Médico">Médico</option>
+      <option value="Beauty">Beauty</option>
+      <option value="Cannabis">Cannabis</option>
+      <option value="Comida fora">Comida fora</option>
+      <option value="Contadora">Contadora</option>
+      <option value="Mercado">Mercado</option>
+      <option value="Festa">Festa</option>
+      <option value="Gasolina">Gasolina</option>
+      <option value="Instrumento Musical">Instrumento Musical</option>
+      <option value="Conta de Luz">Conta de Luz</option>
+      <option value="Petshop">Petshop</option>
+      <option value="Taxa Banco">Taxa Banco</option>
+      <option value="Apple">Apple</option>
+      <option value="Conta de Telefone">Conta de Telefone</option>
+      <option value="Conta Internet">Conta Internet</option>
+      <option value="Utensílios Casa">Utensílios Casa</option>
+      <option value="Semi Joias">Semi Joias</option>
+      <option value="Vestuário">Vestuário</option>
+      <option value="Ensino">Ensino</option>
+      <option value="Viagem">Viagem</option>
+      <option value="Salário">Salário</option>
+      <option value="Comissão">Comissão</option>
+      <option value="Outros">Outros</option>
+      <option value="Aluguel">Aluguel</option>
+      <!-- Adicione outras opções de tipo aqui conforme necessário -->
+    </select>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Usuário</th>
+          <th>Data</th>
+          <th>Valor</th>
+          <th>Tipo</th>
+          <th>Detalhes</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="transactionsBody"></tbody>
+    </table>
+  </div>
+
+  <script>
+    const transactions = [];
+
+    function addTransaction() {
+      const user = document.getElementById("user").value;
+      const date = document.getElementById("date").value;
+      const amount = document.getElementById("amount").value;
+      const type = document.getElementById("type").value;
+      const details = document.getElementById("details").value;
+
+      if (!user || !date || !amount || !type) {
+        alert("Por favor, preencha todos os campos!");
+        return;
+      }
+
+      transactions.push({ user, date, amount, type, details });
+      displayTransactions();
+      displaySummary();
+      clearForm();
+    }
+
+    function clearForm() {
+      document.getElementById("user").value = "";
+      document.getElementById("date").value = "";
+      document.getElementById("amount").value = "";
+      document.getElementById("type").value = "";
+      document.getElementById("details").value = "";
+    }
+
+    function displayTransactions() {
+      const transactionsBody = document.getElementById("transactionsBody");
+      transactionsBody.innerHTML = "";
+
+      transactions.forEach((transaction, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${transaction.user}</td>
+          <td>${formatDate(transaction.date)}</td>
+          <td>R$ ${parseFloat(transaction.amount).toFixed(2)}</td>
+          <td>${transaction.type}</td>
+          <td>${transaction.details}</td>
+          <td>
+            <button onclick="removeTransaction(${index})">Remover</button>
+          </td>
+        `;
+        transactionsBody.appendChild(row);
+      });
+    }
+
+    function removeTransaction(index) {
+      transactions.splice(index, 1);
+      displayTransactions();
+      displaySummary();
+    }
+
+    function filterTransactions() {
+      const filterUser = document.getElementById("filterUser").value;
+      const filterMonth = document.getElementById("filterMonth").value;
+      const filterAmount = document.getElementById("filterAmount").value;
+      const filterType = document.getElementById("filterType").value;
+
+      let filteredTransactions = transactions;
+
+      if (filterUser !== "Casal") {
+        filteredTransactions = filteredTransactions.filter(
+          (transaction) => transaction.user === filterUser
+        );
+      }
+
+      if (filterMonth) {
+        filteredTransactions = filteredTransactions.filter(
+          (transaction) => {
+            const month = transaction.date.split("-")[1];
+            return month === filterMonth;
+          }
+        );
+      }
+
+      if (filterAmount === "asc") {
+        filteredTransactions.sort((a, b) => parseFloat(a.amount) - parseFloat(b.amount));
+      } else if (filterAmount === "desc") {
+        filteredTransactions.sort((a, b) => parseFloat(b.amount) - parseFloat(a.amount));
+      }
+
+      if (filterType) {
+        filteredTransactions = filteredTransactions.filter(
+          (transaction) => transaction.type === filterType
+        );
+      }
+
+      displayFilteredTransactions(filteredTransactions);
+    }
+
+    function displayFilteredTransactions(filteredTransactions) {
+      const transactionsBody = document.getElementById("transactionsBody");
+      transactionsBody.innerHTML = "";
+
+      filteredTransactions.forEach((transaction, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${transaction.user}</td>
+          <td>${formatDate(transaction.date)}</td>
+          <td>R$ ${parseFloat(transaction.amount).toFixed(2)}</td>
+          <td>${transaction.type}</td>
+          <td>${transaction.details}</td>
+          <td>
+            <button onclick="removeTransaction(${index})">Remover</button>
+          </td>
+        `;
+        transactionsBody.appendChild(row);
+      });
+    }
+
+    function displaySummary() {
+      const annualSummaryContent = document.getElementById(
+        "annualSummaryContent"
+      );
+      const monthlySummaryContent = document.getElementById(
+        "monthlySummaryContent"
+      );
+
+      const annualSummary = {};
+      const monthlySummary = {};
+
+      transactions.forEach((transaction) => {
+        const dateParts = transaction.date.split("-");
+        const year = dateParts[0];
+        const month = dateParts[1];
+
+        if (!annualSummary[year]) {
+          annualSummary[year] = { recebido: 0, gasto: 0 };
+        }
+        if (!monthlySummary[year]) {
+          monthlySummary[year] = {};
+        }
+        if (!monthlySummary[year][month]) {
+          monthlySummary[year][month] = { recebido: 0, gasto: 0 };
+        }
+
+        if (parseFloat(transaction.amount) >= 0) {
+          annualSummary[year].recebido += parseFloat(transaction.amount);
+          monthlySummary[year][month].recebido += parseFloat(
+            transaction.amount
+          );
+        } else {
+          annualSummary[year].gasto -= parseFloat(transaction.amount);
+          monthlySummary[year][month].gasto -= parseFloat(transaction.amount);
+        }
+      });
+
+      const annualSummaryRows = [];
+      const monthlySummaryRows = [];
+
+      for (const year in annualSummary) {
+        const difference =
+          annualSummary[year].recebido - annualSummary[year].gasto;
+        const differenceClass =
+          difference >= 0 ? "positiveDifference" : "negativeDifference";
+        annualSummaryRows.push(`
+          <tr>
+            <td>${year}</td>
+            <td>R$ ${annualSummary[year].recebido.toFixed(2)}</td>
+            <td>R$ ${annualSummary[year].gasto.toFixed(2)}</td>
+            <td class="${differenceClass}"><strong>R$ ${difference.toFixed(
+          2
+        )}</strong></td>
+          </tr>
+        `);
+      }
+
+      for (const year in monthlySummary) {
+        for (const month in monthlySummary[year]) {
+          const difference =
+            monthlySummary[year][month].recebido -
+            monthlySummary[year][month].gasto;
+          const differenceClass =
+            difference >= 0 ? "positiveDifference" : "negativeDifference";
+          monthlySummaryRows.push(`
+            <tr>
+              <td>${getMonthName(month)}</td>
+              <td>R$ ${monthlySummary[year][month].recebido.toFixed(2)}</td>
+              <td>R$ ${monthlySummary[year][month].gasto.toFixed(2)}</td>
+              <td class="${differenceClass}"><strong>R$ ${difference.toFixed(
+            2
+          )}</strong></td>
+            </tr>
+          `);
+        }
+      }
+
+      annualSummaryContent.innerHTML = annualSummaryRows.join("");
+      monthlySummaryContent.innerHTML = monthlySummaryRows.join("");
+    }
+
+    function formatDate(dateString) {
+      const dateParts = dateString.split("-");
+      return `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
+    }
+
+    function getMonthName(month) {
+      const monthNames = [
+        "Janeiro",
+        "Fevereiro",
+        "Março",
+        "Abril",
+        "Maio",
+        "Junho",
+        "Julho",
+        "Agosto",
+        "Setembro",
+        "Outubro",
+        "Novembro",
+        "Dezembro",
+      ];
+      return monthNames[parseInt(month) - 1];
+    }
+
+    displayTransactions();
+    displaySummary();
+  </script>
+</body>
+</html>
